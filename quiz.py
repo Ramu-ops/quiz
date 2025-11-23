@@ -93,7 +93,7 @@ class QuizGame:
         self.start_camera_monitoring()
     
     def load_questions_from_sheet(self):
-        """Load questions from Google Sheet CSV export"""
+       
         try:
             # Google Sheets CSV export URL
             sheet_id = "1xKbWWQ39_q6aR17uy9xZMi0HaDnt38TCflwgS2UB4Kc"
@@ -153,7 +153,7 @@ class QuizGame:
             ]
     
     def select_random_questions(self, num_questions=5):
-        """Select random questions from loaded questions"""
+       
         if len(self.all_questions) < num_questions:
             num_questions = len(self.all_questions)
         
@@ -166,7 +166,7 @@ class QuizGame:
         self.answers = tuple(self.convert_answer_to_letter(q['correct_answer'], q['options']) for q in selected)
     
     def convert_answer_to_letter(self, correct_answer, options):
-        """Convert correct answer to A, B, C, or D"""
+        
         # If already a letter, return it
         if correct_answer in ['A', 'B', 'C', 'D']:
             return correct_answer
@@ -200,7 +200,7 @@ class QuizGame:
             messagebox.showwarning("Camera Error", f"Could not initialize camera: {e}")
     
     def start_camera_monitoring(self):
-        """Start camera monitoring in a separate thread"""
+        
         if self.camera_active:
             self.monitoring = True
             self.camera_thread = threading.Thread(target=self.monitor_camera, daemon=True)
@@ -208,7 +208,7 @@ class QuizGame:
             self.update_camera_display()
     
     def monitor_camera(self):
-        """Monitor camera for face and eye movements"""
+        
         while self.monitoring and self.camera_active:
             ret, frame = self.cap.read()
             if not ret:
@@ -260,7 +260,7 @@ class QuizGame:
             self.camera_frame = frame
     
     def handle_face_not_detected(self):
-        """Handle when face is not detected"""
+        
         if self.question_num < len(self.questions) and self.monitoring:
             self.root.after(0, lambda: messagebox.showerror(
                 "Face Not Detected",
@@ -269,7 +269,7 @@ class QuizGame:
             self.root.after(0, self.show_results_terminated)
     
     def handle_excessive_movement(self):
-        """Handle excessive body movement"""
+        
         if self.question_num < len(self.questions) and self.monitoring and not hasattr(self, '_movement_warning_shown'):
             self._movement_warning_shown = True
             self.root.after(0, lambda: messagebox.showwarning(
@@ -280,7 +280,7 @@ class QuizGame:
             self.root.after(5000, lambda: delattr(self, '_movement_warning_shown') if hasattr(self, '_movement_warning_shown') else None)
     
     def update_camera_display(self):
-        """Update camera feed display"""
+        
         if self.camera_active and self.monitoring and self.camera_frame is not None:
             frame_rgb = cv2.cvtColor(self.camera_frame, cv2.COLOR_BGR2RGB)
             frame_resized = cv2.resize(frame_rgb, (200, 150))
@@ -304,14 +304,14 @@ class QuizGame:
             self.root.after(30, self.update_camera_display)
     
     def stop_camera(self):
-        """Stop camera monitoring"""
+       
         self.monitoring = False
         self.camera_active = False
         if self.cap is not None:
             self.cap.release()
     
     def on_focus_out(self, event):
-        """Detect when user switches tabs/windows - STOP QUIZ"""
+        
         self.tab_switches += 1
         if self.question_num < len(self.questions):
             messagebox.showerror(
@@ -325,7 +325,7 @@ class QuizGame:
         pass
     
     def start_eye_tracking(self):
-        """Start tracking mouse movement as eye proxy"""
+       
         self.eye_tracking_active = True
         self.root.bind('<Motion>', self.track_mouse)
         self.create_eye_follower()
@@ -336,7 +336,7 @@ class QuizGame:
         self.mouse_y = event.y
     
     def create_eye_follower(self):
-        """Create eyes that follow the mouse"""
+        
         self.eye_canvas = tk.Canvas(
             self.root,
             width=120,
@@ -364,7 +364,7 @@ class QuizGame:
         self.update_eye_position()
     
     def update_eye_position(self):
-        """Update pupil positions to follow mouse"""
+        
         if self.eye_tracking_active and hasattr(self, 'left_pupil'):
             import math
             
@@ -403,7 +403,7 @@ class QuizGame:
             self.root.after(50, self.update_eye_position)
     
     def update_datetime(self):
-        """Update date and time display"""
+        
         if hasattr(self, 'datetime_label') and self.datetime_label.winfo_exists():
             now = datetime.now()
             date_str = now.strftime("%A, %B %d, %Y")
@@ -412,12 +412,12 @@ class QuizGame:
             self.root.after(1000, self.update_datetime)
     
     def toggle_fullscreen(self):
-        """Toggle fullscreen mode"""
+       
         current_state = self.root.attributes('-fullscreen')
         self.root.attributes('-fullscreen', not current_state)
     
     def create_gradient_background(self):
-        """Create a beautiful gradient background"""
+
         width = self.screen_width
         height = self.screen_height
         
@@ -436,7 +436,7 @@ class QuizGame:
         self.bg_label.place(x=0, y=0, relwidth=1, relheight=1)
     
     def create_colorful_emoji(self, canvas, emoji_text, x, y, size=100):
-        """Create colorful emoji with glow effect"""
+        
         glow_colors = ['#FFD700', '#FFA500', '#FF6347', '#FF1493', '#00FFFF', '#00FF00']
         
         for i, color in enumerate(glow_colors):
@@ -717,7 +717,7 @@ class QuizGame:
         self.feedback_label.place(relx=0.5, rely=0.95, anchor=tk.CENTER)
     
     def animate_title(self):
-        """Animate title with color changes"""
+        
         colors = ['#FFD700', '#FF6347', '#00FF00', '#00FFFF', '#FF69B4', '#FFA500']
         self.color_index = 0
         
@@ -760,7 +760,7 @@ class QuizGame:
             self.show_results()
     
     def highlight_selected_option(self):
-        """Highlight the currently selected option"""
+       
         selected = self.selected_option.get()
         option_colors = ['#FF6B6B', '#4ECDC4', '#45B7D1', '#FFA07A']
         
@@ -783,12 +783,12 @@ class QuizGame:
         self.root.after(100, self.highlight_selected_option)
     
     def select_option(self, index):
-        """Select an option when any part of it is clicked"""
+       
         letter = chr(ord('A') + index)
         self.selected_option.set(letter)
     
     def skip_question(self):
-        """Skip the current question"""
+        
         self.skipped_questions.append(self.question_num + 1)
         self.guesses.append("SKIPPED")
         self.feedback_label.config(text="⏭️ Question Skipped!", fg="#FFA500")
@@ -800,7 +800,7 @@ class QuizGame:
         self.root.after(1500, lambda: (self.submit_btn.config(state=tk.NORMAL), self.skip_btn.config(state=tk.NORMAL)))
     
     def check_answer(self):
-        """Check if the selected answer is correct"""
+        
         guess = self.selected_option.get()
         
         if not guess:
@@ -832,7 +832,7 @@ class QuizGame:
         self.root.after(1500, lambda: (self.submit_btn.config(state=tk.NORMAL), self.skip_btn.config(state=tk.NORMAL)))
     
     def show_selected_answer(self, selected):
-        """Show which answer the user selected"""
+        
         option_colors = ['#FF6B6B', '#4ECDC4', '#45B7D1', '#FFA07A']
         
         for i in range(4):
@@ -849,7 +849,7 @@ class QuizGame:
                 text_label.config(fg=option_colors[i])
     
     def show_fireworks_animation(self):
-        """Show colorful fireworks animation for correct answer"""
+        
         self.fireworks = []
         colors = ['#FFD700', '#FF6347', '#00FF00', '#1E90FF', '#FF69B4', '#FFA500', 
                   '#00FFFF', '#FF1493', '#7FFF00', '#FF4500']
@@ -873,7 +873,7 @@ class QuizGame:
         self.root.after(1500, self.clear_fireworks)
     
     def animate_firework(self, firework, start_x, start_y, angle):
-        """Animate individual firework particle"""
+        
         import math
         
         distance = 0
@@ -898,13 +898,13 @@ class QuizGame:
         move()
     
     def clear_fireworks(self):
-        """Remove all firework elements"""
+        
         for firework in self.fireworks:
             firework.destroy()
         self.fireworks = []
     
     def show_thumbs_down_animation(self):
-        """Show animated sad emoji with thumbs down for wrong answer"""
+        
         self.sad_emoji = tk.Label(
             self.root,
             text="😞",
@@ -942,7 +942,7 @@ class QuizGame:
         shake()
     
     def animate_thumb_gesture(self):
-        """Animate thumbs down sliding in from the side"""
+        
         x_positions = list(range(self.screen_width, self.screen_width//2 - 150, -50))
         colors = ['#FF0000', '#FF4500', '#FF6347', '#FF1493', '#FF0000']
         
@@ -961,14 +961,14 @@ class QuizGame:
         slide_in()
     
     def clear_sad_animation(self):
-        """Remove sad emoji animation elements"""
+       
         if hasattr(self, 'sad_emoji'):
             self.sad_emoji.destroy()
         if hasattr(self, 'thumb_down'):
             self.thumb_down.destroy()
     
     def show_firecracker_animation(self):
-        """Show intense firecracker animation on results page"""
+       
         self.firecrackers = []
         
         for _ in range(30):
@@ -990,7 +990,7 @@ class QuizGame:
         self.root.after(5000, self.clear_firecrackers)
     
     def animate_firecracker(self, firecracker, start_x, start_y, angle):
-        """Animate individual firecracker particle"""
+       
         import math
         
         distance = 0
@@ -1017,14 +1017,14 @@ class QuizGame:
         explode()
     
     def clear_firecrackers(self):
-        """Remove all firecracker elements"""
+        
         for firecracker in self.firecrackers:
             if firecracker.winfo_exists():
                 firecracker.destroy()
         self.firecrackers = []
     
     def show_clapping_cartoon(self):
-        """Show animated clapping cartoon character"""
+        
         self.cartoon_body = tk.Label(
             self.root,
             text="🙂",
@@ -1055,7 +1055,7 @@ class QuizGame:
         self.root.after(3000, self.stop_clapping)
     
     def create_confetti(self):
-        """Create colorful confetti particles"""
+        
         confetti_emojis = ['🎉', '🎊', '✨', '⭐', '🌟', '💫']
         colors = ['#FFD700', '#FF6347', '#00FF00', '#1E90FF', '#FF69B4', '#FFA500']
         
@@ -1075,7 +1075,7 @@ class QuizGame:
             self.animate_confetti(confetti, x, y)
     
     def animate_confetti(self, confetti, start_x, start_y):
-        """Animate confetti falling down"""
+       
         y = start_y
         
         def fall():
@@ -1089,7 +1089,7 @@ class QuizGame:
         fall()
     
     def animate_clapping(self):
-        """Animate hands clapping"""
+       
         self.clap_count = 0
         positions = [
             (0.35, 0.18, 0.65, 0.18),
@@ -1114,7 +1114,7 @@ class QuizGame:
         clap()
     
     def stop_clapping(self):
-        """Remove clapping animation"""
+        
         if hasattr(self, 'cartoon_body'):
             self.cartoon_body.destroy()
         if hasattr(self, 'left_hand'):
@@ -1127,7 +1127,7 @@ class QuizGame:
         self.confetti = []
     
     def show_results_terminated(self):
-        """Show results when quiz is terminated due to tab switch"""
+         
         self.eye_tracking_active = False
         self.stop_camera()
         
@@ -1509,4 +1509,5 @@ if __name__ == "__main__":
         self.question_num += 1
         
         self.root.after(1500, self.display_question)
+
         self.submit_btn.config(state=tk.DISABLED)
